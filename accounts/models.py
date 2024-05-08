@@ -29,4 +29,13 @@ class CustomUsermanager(BaseUserManager):
 
 
 class User(AbstractUser):
-    ...
+    email = models.EmailField(max_length=100)
+    username = models.CharField(max_length=20)
+    score = models.IntegerField()
+
+    objects = CustomUsermanager()
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = "username"
+
+    def __str__(self) -> str:
+        return self.username
