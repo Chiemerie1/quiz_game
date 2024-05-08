@@ -7,6 +7,7 @@ from .serializers import RegisterSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
+from .tokens import create_jwt_user_tokens
 # Create your views here.
 
 
@@ -39,9 +40,10 @@ class LoginView(APIView):
 
         user = authenticate(email=email, password=password)
         if user is not None:
+            tokens = create_jwt_user_tokens(user)
             response = {
                 "message": f'{str(user)} authenticated',
-                "token": user.auth_token.key
+                "token": tokens
             }
             return Response(data=response, status=status.HTTP_200_OK)
         return Response(data={"message": "Wrong credentials"})
