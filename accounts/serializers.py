@@ -18,5 +18,15 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if User.objects.filter(email=attrs["email"]).exists():
             raise ValidationError("Email is already in use")
+        
+        if User.objects.filter(username=attrs["username"]).exists():
+            raise ValidationError("username has already been taken")
 
         return super().validate(attrs)
+    
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = super().create(validated_data)
+        user.set_password(password)
+        user.save()
+        return user
