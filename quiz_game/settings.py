@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'accounts',
+    # External apps
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +55,18 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'quiz_game.urls'
+
+# Rest framework setting #######
+REST_FRAMEWORK = {
+    "NON_FIELD_ERROR_KEY": "errors",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated"
+    ]
+}
 
 TEMPLATES = [
     {
