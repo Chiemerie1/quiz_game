@@ -8,6 +8,8 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from .tokens import create_jwt_user_tokens
+from rest_framework.permissions import IsAuthenticated
+
 # Create your views here.
 
 
