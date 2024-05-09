@@ -8,7 +8,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from .tokens import create_jwt_user_tokens
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
 # Create your views here.
 
@@ -56,5 +56,6 @@ class LoginView(APIView):
             "user": str(user),
             "auth": str(request.auth)
         }
+        
         return Response(data=response, status=status.HTTP_200_OK)
     

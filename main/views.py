@@ -7,7 +7,7 @@ from accounts.models import User
 from .serializers import ContestSerializer, QuestionAndOptionsSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.decorators import api_view, permission_classes
 from .models import Contest, QuestionAndOptions, UserParticipation, LeaderBoard
 from .serializers import ContestSerializer, QuestionAndOptionsSerializer
@@ -17,7 +17,7 @@ from .serializers import ContestSerializer, QuestionAndOptionsSerializer
 
 
 @api_view(http_method_names=["GET", "POST"])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAdminUser])
 def contest_list(request: Request):
     contest = Contest.objects.all()
 
@@ -46,6 +46,19 @@ def contest_list(request: Request):
 
 
 
+@api_view(http_method_names=["GET",])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def get_contest_list(request: Request):
+    contest = Contest.objects.all()    
+    serializer = ContestSerializer(instance=contest, many=True)
+    response = {
+        "message": "contest",
+        "data": serializer.data
+    }
+    return Response(data=response, status=status.HTTP_200_OK)
+# return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 @api_view(http_method_names=["GET"])
 @permission_classes([IsAuthenticatedOrReadOnly])
@@ -63,7 +76,7 @@ def get_contest_detail(request: Request, contest_id: int):
 
 
 @api_view(http_method_names=["PUT"])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAdminUser])
 def update_contest(request: Request, contest_id: int):
     contest = get_object_or_404(Contest, pk=contest_id)
 
@@ -82,7 +95,7 @@ def update_contest(request: Request, contest_id: int):
 
 
 @api_view(http_method_names=["DELETE"])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAdminUser])
 def delete_contest(request: Request, contest_id: int):
     contest = get_object_or_404(Contest, pk=contest_id)
     contest.delete()
