@@ -16,6 +16,8 @@ class ContestSerializer(serializers.ModelSerializer):
 
 class QuestionAndOptionsSerializer(serializers.ModelSerializer):
 
+    contest = serializers.PrimaryKeyRelatedField(queryset=Contest.objects.all())
+
     answer = serializers.CharField(max_length=100, required=True)
     option1 = serializers.CharField(max_length=100, required=True)
     option2 = serializers.CharField(max_length=100, required=True)
@@ -24,7 +26,16 @@ class QuestionAndOptionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionAndOptions
-        fields = ["__all__"]
+        fields = [
+            "id",
+            "contest",
+            "question",
+            "answer",
+            "option1",
+            "option2",
+            "option3",
+            "option4",
+        ]
 
 
 

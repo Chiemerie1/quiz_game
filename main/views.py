@@ -100,3 +100,22 @@ def delete_contest(request: Request, contest_id: int):
     contest = get_object_or_404(Contest, pk=contest_id)
     contest.delete()
     return Response(data={"message": "Contest deleted"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+@api_view(http_method_names=["POST"])
+@permission_classes([IsAdminUser])
+def quiz(request: Request):
+    data = request.data
+    serializer = QuestionAndOptionsSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+    
+        response = {
+            "message": "Posted",
+            "data": serializer.data
+        }
+        return Response(data=response, status=status.HTTP_200_OK)
+    return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+

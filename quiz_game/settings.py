@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    # OpenAPI documentation
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -156,3 +158,4 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 
 }
+
