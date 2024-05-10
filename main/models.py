@@ -26,15 +26,6 @@ class QuestionAndOptions(models.Model):
     option3 = models.CharField(max_length=100)
     option4 = models.CharField(max_length=100)
 
-    #definig the correct answer
-    def correct(self, *args, **kwargs):
-        self.options = [self.option1, self.option2, self.option3, self.option4]
-        for option in self.option:
-            if option == self.answer:
-                return f'{self.answer} is correct'
-            return "Failed"
-        # super(QuestionAndOptions, self).save(*args, **kwargs)
-
     def get_shuffled_questions(self):
         self.shuffled_queryset = QuestionAndOptions.objects.raw(
             'SELECT * FROM main_questionandoptions ORDER BY RANDOM()'

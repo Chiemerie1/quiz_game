@@ -155,7 +155,6 @@ def get_question_detail(request: Request, question_id: int, contest_id: int):
     else:
         return Response(data={"message": "Failed"}, status=status.HTTP_200_OK)
 
-    # data = request.data
-    # serializer = AnswerSerializer(data=data)
-    # print(serializer.data)
 
+
+#### Work on the leaderboard
