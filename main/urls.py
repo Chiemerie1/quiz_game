@@ -31,8 +31,10 @@ urlpatterns = [
     path("api/get-contest/", views.get_contest_list, name="get_contest"),
     path("api/get-contest/<int:contest_id>/", views.get_contest_detail, name="contest_detail"),
     path("api/update-contest/<int:contest_id>", views.update_contest, name="update_detail"),
-    path("api/delete-contest/<int:contest_id>/", views.delete_contest, name="delete_detail"),
+    path("api/delete-contest/<int:contest_id>", views.delete_contest, name="delete_detail"),
     path("api/create-question/", views.quiz, name="create_questions"),
+    path("api/get-question/", views.get_quiz, name="get_questions"),
+    path("api/get-question/<int:question_id>/<int:contest_id>", views.get_question_detail, name="question_detail"),
 
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

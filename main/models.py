@@ -35,6 +35,14 @@ class QuestionAndOptions(models.Model):
             return "Failed"
         # super(QuestionAndOptions, self).save(*args, **kwargs)
 
+    def get_shuffled_questions(self):
+        self.shuffled_queryset = QuestionAndOptions.objects.raw(
+            'SELECT * FROM main_questionandoptions ORDER BY RANDOM()'
+        )
+        return self.shuffled_queryset
+    
+    
+
     def __str__(self) -> str:
         return f'{str(self.contest.title)} question'
     
@@ -47,6 +55,7 @@ class UserParticipation(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user.username} - {self.contest.title} - Score: {self.score}"
+
 
 
 class LeaderBoard(models.Model):

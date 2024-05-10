@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.decorators import api_view, permission_classes
 from .models import Contest, QuestionAndOptions, UserParticipation, LeaderBoard
-from .serializers import ContestSerializer, QuestionAndOptionsSerializer
+from .serializers import ContestSerializer, QuestionAndOptionsSerializer, AnswerSerializer
 
 # Create your views here.
 
@@ -35,7 +35,7 @@ def contest_list(request: Request):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-    if request.method == "GET":
+    elif request.method == "GET":
         serializer = ContestSerializer(instance=contest, many=True)
         response = {
             "message": "contest",
@@ -118,4 +118,44 @@ def quiz(request: Request):
         return Response(data=response, status=status.HTTP_200_OK)
     return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+
+@api_view(http_method_names=["GET"])
+@permission_classes([IsAuthenticated])
+def get_quiz(request: Request):
+    questions = QuestionAndOptions().get_shuffled_questions()
+    
+    serializer = QuestionAndOptionsSerializer(instance=questions, many=True)
+    
+    response = {
+        "message": "Retrieved",
+        "data": serializer.data
+    }
+    return Response(data=response, status=status.HTTP_200_OK)
+    
+
+@api_view(http_method_names=["POST"])
+@permission_classes([IsAuthenticated])
+def get_question_detail(request: Request, question_id: int, contest_id: int):
+
+    user_participation, _ = UserParticipation.objects.get_or_create(contest=contest_id, user=request.user.id)
+    print(user_participation)
+    question = get_object_or_404(QuestionAndOptions, pk=question_id)
+    # question.answer
+    data = request.data
+    if question.answer == data["select_choice"]:
+        user_participation.score += 2
+        user_participation.save()
+
+        response = {
+            "message": "correct answer",
+            "current score": user_participation.score
+        }
+        return Response(data=response, status=status.HTTP_200_OK)
+    else:
+        return Response(data={"message": "Failed"}, status=status.HTTP_200_OK)
+
+    # data = request.data
+    # serializer = AnswerSerializer(data=data)
+    # print(serializer.data)
 

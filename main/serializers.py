@@ -39,4 +39,6 @@ class QuestionAndOptionsSerializer(serializers.ModelSerializer):
 
 
 
+class AnswerSerializer(serializers.Serializer):
+    selected_choice = serializers.CharField(max_length=100)
 
