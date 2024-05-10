@@ -12,6 +12,9 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import Contest, QuestionAndOptions, UserParticipation, LeaderBoard
 from .serializers import ContestSerializer, QuestionAndOptionsSerializer, AnswerSerializer
 
+from django.db.models import Sum
+
+
 # Create your views here.
 
 
@@ -138,10 +141,11 @@ def get_quiz(request: Request):
 @permission_classes([IsAuthenticated])
 def get_question_detail(request: Request, question_id: int, contest_id: int):
 
+    user_weekly_score = LeaderBoard().compute_weekly_score(request.user.id)
+    print(user_weekly_score["total_score"])
+
     user_participation, _ = UserParticipation.objects.get_or_create(contest=contest_id, user=request.user.id)
-    print(user_participation)
     question = get_object_or_404(QuestionAndOptions, pk=question_id)
-    # question.answer
     data = request.data
     if question.answer == data["select_choice"]:
         user_participation.score += 2

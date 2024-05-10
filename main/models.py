@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from django.db.models import Sum
 
 # Create your models here.
 
@@ -52,8 +53,21 @@ class UserParticipation(models.Model):
 class LeaderBoard(models.Model):
     contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    weekly_rank = models.IntegerField()
-    weekly_score = models.IntegerField()
+    weekly_rank = models.IntegerField(default=0)
+    weekly_score = models.IntegerField(default=0)
 
+    ### All the scores of all the quizes will be computed to make the weekely scores
+    def compute_weekly_score(self, user_id: int):
+        # total_score = 0
+        self.this_user_score = UserParticipation.objects.filter(user=user_id)
+        self.this_user_score = self.this_user_score.aggregate(total_score=Sum("score"))
+        return self.this_user_score
+    
+        # self.this_user_score.values("score").all()
+        # for score in self.this_user_score:
+        #     total_score += score.score
+        ...
     def __str__(self) -> str:
         return f"{self.user.username} - {self.contest.contest_name} - Weekly Rank: {self.weekly_rank}, Weekly Score: {self.weekly_score}"
+    
+
