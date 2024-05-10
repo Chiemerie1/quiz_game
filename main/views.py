@@ -11,14 +11,19 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.decorators import api_view, permission_classes
 from .models import Contest, QuestionAndOptions, UserParticipation, LeaderBoard
 from .serializers import ContestSerializer, QuestionAndOptionsSerializer, AnswerSerializer
+# for cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie, vary_on_headers
 
-from django.db.models import Sum
+
 
 
 # Create your views here.
 
 
-
+@cache_page(60* 60 * 3)
+@method_decorator(vary_on_headers("Authorization"))
 @api_view(http_method_names=["GET", "POST"])
 @permission_classes([IsAdminUser])
 def contest_list(request: Request):
@@ -49,6 +54,7 @@ def contest_list(request: Request):
 
 
 
+@cache_page(60* 60 * 3)
 @api_view(http_method_names=["GET",])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def get_contest_list(request: Request):
@@ -59,7 +65,6 @@ def get_contest_list(request: Request):
         "data": serializer.data
     }
     return Response(data=response, status=status.HTTP_200_OK)
-# return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -123,6 +128,7 @@ def quiz(request: Request):
     
 
 
+@cache_page(60* 60 * 3)
 @api_view(http_method_names=["GET"])
 @permission_classes([IsAuthenticated])
 def get_quiz(request: Request):
@@ -137,6 +143,9 @@ def get_quiz(request: Request):
     return Response(data=response, status=status.HTTP_200_OK)
     
 
+
+
+@cache_page(60* 60 * 3)
 @api_view(http_method_names=["POST"])
 @permission_classes([IsAuthenticated])
 def quiz_functions(request: Request, question_id: int, contest_id: int):
@@ -164,7 +173,8 @@ def quiz_functions(request: Request, question_id: int, contest_id: int):
         return Response(data={"message": "Failed"}, status=status.HTTP_200_OK)
 
 
-### Database indexing: check
+### Database indexing:      check
 ### Efficiency in querries: check
-### Caching
-### Asynchronous Processing
+### Caching:                check
+### Asynchronous Processing:
+
