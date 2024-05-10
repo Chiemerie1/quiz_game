@@ -139,10 +139,14 @@ def get_quiz(request: Request):
 
 @api_view(http_method_names=["POST"])
 @permission_classes([IsAuthenticated])
-def get_question_detail(request: Request, question_id: int, contest_id: int):
+def quiz_functions(request: Request, question_id: int, contest_id: int):
 
+    contest = Contest.objects.get(pk=contest_id)
     user_weekly_score = LeaderBoard().compute_weekly_score(request.user.id)
-    print(user_weekly_score["total_score"])
+    leader_board, _ = LeaderBoard.objects.get_or_create(user=request.user, contest=contest)
+    leader_board.weekly_score = user_weekly_score["total_score"]
+    leader_board.save()
+    
 
     user_participation, _ = UserParticipation.objects.get_or_create(contest=contest_id, user=request.user.id)
     question = get_object_or_404(QuestionAndOptions, pk=question_id)
@@ -160,5 +164,7 @@ def get_question_detail(request: Request, question_id: int, contest_id: int):
         return Response(data={"message": "Failed"}, status=status.HTTP_200_OK)
 
 
-
-#### Work on the leaderboard
+### Database indexing: check
+### Efficiency in querries: check
+### Caching
+### Asynchronous Processing
