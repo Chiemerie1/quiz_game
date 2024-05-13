@@ -26,16 +26,7 @@ class QuestionAndOptionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionAndOptions
-        fields = [
-            "id",
-            "contest",
-            "question",
-            "answer",
-            "option1",
-            "option2",
-            "option3",
-            "option4",
-        ]
+        fields = "__all__"
 
 
 

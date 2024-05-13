@@ -31,5 +31,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         ### creating token for the user
-        Token.objects.create(user=user)
+        # Token.objects.create(user=user)
         return user
+    
+
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.CharField(max_length=100)
+    password = serializers.CharField(max_length=200)

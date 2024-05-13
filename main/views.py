@@ -16,6 +16,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_cookie, vary_on_headers
 
+from drf_spectacular.utils import extend_schema
+
 
 
 
@@ -23,6 +25,7 @@ from django.views.decorators.vary import vary_on_cookie, vary_on_headers
 
 
 @cache_page(60* 60 * 3)
+@extend_schema(request=ContestSerializer, responses=ContestSerializer)
 @method_decorator(vary_on_headers("Authorization"))
 @api_view(http_method_names=["GET", "POST"])
 @permission_classes([IsAdminUser])
@@ -55,7 +58,8 @@ def contest_list(request: Request):
 
 
 @cache_page(60* 60 * 3)
-@api_view(http_method_names=["GET",])
+@extend_schema(request=None, responses=ContestSerializer)
+@api_view(http_method_names=["GET"])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def get_contest_list(request: Request):
     contest = Contest.objects.all()    
@@ -67,7 +71,7 @@ def get_contest_list(request: Request):
     return Response(data=response, status=status.HTTP_200_OK)
 
 
-
+@extend_schema(request=ContestSerializer, responses=ContestSerializer)
 @api_view(http_method_names=["GET"])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def get_contest_detail(request: Request, contest_id: int):
@@ -82,7 +86,7 @@ def get_contest_detail(request: Request, contest_id: int):
     return Response(data=response, status=status.HTTP_200_OK)
 
 
-
+@extend_schema(request=ContestSerializer, responses=ContestSerializer)
 @api_view(http_method_names=["PUT"])
 @permission_classes([IsAdminUser])
 def update_contest(request: Request, contest_id: int):
@@ -102,6 +106,7 @@ def update_contest(request: Request, contest_id: int):
 
 
 
+@extend_schema(request=None, responses=None)
 @api_view(http_method_names=["DELETE"])
 @permission_classes([IsAdminUser])
 def delete_contest(request: Request, contest_id: int):
@@ -111,9 +116,10 @@ def delete_contest(request: Request, contest_id: int):
 
 
 
+@extend_schema(request=QuestionAndOptionsSerializer, responses=None)
 @api_view(http_method_names=["POST"])
 @permission_classes([IsAdminUser])
-def quiz(request: Request):
+def add_question(request: Request):
     data = request.data
     serializer = QuestionAndOptionsSerializer(data=data)
     if serializer.is_valid():
@@ -128,6 +134,7 @@ def quiz(request: Request):
     
 
 
+@extend_schema(request=None, responses=QuestionAndOptionsSerializer)
 @cache_page(60* 60 * 3)
 @api_view(http_method_names=["GET"])
 @permission_classes([IsAuthenticated])
@@ -146,6 +153,7 @@ def get_quiz(request: Request):
 
 
 @cache_page(60* 60 * 3)
+@extend_schema(request=AnswerSerializer, responses=None)
 @api_view(http_method_names=["POST"])
 @permission_classes([IsAuthenticated])
 def quiz_functions(request: Request, question_id: int, contest_id: int):
